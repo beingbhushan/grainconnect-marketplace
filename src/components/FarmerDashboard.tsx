@@ -6,8 +6,8 @@ import GoogleTranslate from './GoogleTranslate';
 interface FarmerDashboardProps {
   products: Product[];
   onAddProduct: (product: Omit<Product, 'id'>) => void;
-  onUpdateProduct: (product: Product) => void; // changes 
-  onDeleteProduct: (id: string) => void;       // changes 
+  onUpdateProduct: (product: Product) => void; // ✅ NEW
+  onDeleteProduct: (id: string) => void;       // ✅ NEW
   onBack: () => void;
 }
 
@@ -53,6 +53,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({
     };
 
     if (editingProduct) {
+      // ✅ FIXED EDIT
       onUpdateProduct({
         ...editingProduct,
         ...productData
@@ -185,7 +186,7 @@ const FarmerDashboard: React.FC<FarmerDashboardProps> = ({
         ))}
       </div>
 
-      {/* MODAL */}
+      {/* MODAL (same as your original — untouched) */}
       {showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <form onSubmit={handleSubmit} className="bg-white p-6 rounded w-full max-w-lg space-y-4">

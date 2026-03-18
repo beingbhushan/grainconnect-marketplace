@@ -1,93 +1,89 @@
-import React, { useState, useEffect } from 'react';
-import HomePage from './components/HomePage';
-import FarmerDashboard from './components/FarmerDashboard';
-import { Product } from './types';
+import React, { useState } from "react";
+import HomePage from "./components/HomePage";
+import FarmerDashboard from "./components/FarmerDashboard";
+import FarmerLogin from "./components/FarmerLogin";
+import { Product } from "./types";
 
-const App: React.FC = () => {
-  const [view, setView] = useState<'home' | 'farmer' | 'customer'>('home');
-  const [user, setUser] = useState<any>(null);
+function App() {
+  const [currentPage, setCurrentPage] = useState<"home" | "farmer">("home");
+  const [farmer, setFarmer] = useState<any>(null);
   const [products, setProducts] = useState<Product[]>([]);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // Load from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('products');
-    if (saved) setProducts(JSON.parse(saved));
-  }, []);
 
-  // Save to localStorage
-  useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products));
-  }, [products]);
-
-  // Fake login
-  const handleFarmerLogin = () => {
-    setUser({ id: 'farmer1', name: 'Rajesh Patil' });
-    setView('farmer');
-  };
-
-  // ADD
-  const handleAddProduct = (product: Omit<Product, 'id'>) => {
-    const newProduct: Product = {
+  // 🔹 Add product
+  const handleAddProduct = (product: Omit<Product, "id">) => {
+    const newProduct = {
       ...product,
-      id: Date.now().toString()
+      id: Date.now().toString(),
     };
-
     setProducts((prev) => [...prev, newProduct]);
   };
 
-  // UPDATE
-  const handleUpdateProduct = (updatedProduct: Product) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
-    );
+  // 🔹 Login
+  const handleLogin = (user: any) => {
+    setFarmer(user);
   };
 
-  // DELETE
-  const handleDeleteProduct = (id: string) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
+  // 🔹 Logout
+  const handleLogout = () => {
+    setFarmer(null);
   };
 
-  // HOME
-  if (view === 'home') {
-    return (
-      <HomePage
-        onNavigate={(v) => {
-          if (v === 'farmer') handleFarmerLogin();
-          else setView(v);
-        }}
+  return (
+    <div>
+      {currentPage === "home" && (
+       <HomePage 
+  onNavigate={(page) => {
+    if (page === "farmer") {
+      setShowLoginModal(true);
+    } else {
+      setCurrentPage(page);
+    }
+  }} 
+/>
+
+      )}
+
+      {currentPage === "farmer" && (
+        farmer ? (
+          <FarmerDashboard
+            products={products}
+            onAddProduct={handleAddProduct}
+            onBack={() => setCurrentPage("home")}
+            farmer={farmer}
+            onLogout={handleLogout}
+          />
+        ) : (
+          <FarmerLogin onLogin={handleLogin} />
+        )
+      )}
+
+      {showLoginModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl p-6 w-full max-w-md relative">
+
+      {/* Close Button */}
+      <button
+        onClick={() => setShowLoginModal(false)}
+        className="absolute top-2 right-2 text-gray-500"
+      >
+        ✕
+      </button>
+
+      <FarmerLogin 
+        onLogin={(user) => {
+          handleLogin(user);
+          setShowLoginModal(false);
+          setCurrentPage("farmer");
+        }} 
       />
-    );
-  }
+    </div>
+  </div>
+)}
 
-  // FARMER DASHBOARD
-  if (view === 'farmer' && user) {
-    return (
-      <FarmerDashboard
-        products={products}
-        onAddProduct={handleAddProduct}
-        onUpdateProduct={handleUpdateProduct}
-        onDeleteProduct={handleDeleteProduct}
-        onBack={() => setView('home')}
-      />
-    );
-  }
-
-  // CUSTOMER (placeholder)
-  if (view === 'customer') {
-    return (
-      <div className="p-10 text-center">
-        <h1 className="text-2xl font-bold">Customer side coming soon 🚧</h1>
-        <button
-          onClick={() => setView('home')}
-          className="mt-4 px-4 py-2 bg-green-600 text-white rounded"
-        >
-          Go Back
-        </button>
-      </div>
-    );
-  }
-
-  return null;
-};
+    </div>
+  );
+}
 
 export default App;
