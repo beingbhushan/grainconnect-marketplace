@@ -29,6 +29,10 @@ The frontend is mostly in place. Backend integration (Node.js, MongoDB) and paym
 - Improve UI and filtering options
 - Integrate payment flow
 
+## PROJECT MOTIVATION
+
+This project is inspired by real-world farming challenges I’ve seen closely while helping my family with farming activities.
+
 ## Note
 
 This is an actively evolving project. I’ve been iterating on it while learning and refining my frontend skills.
