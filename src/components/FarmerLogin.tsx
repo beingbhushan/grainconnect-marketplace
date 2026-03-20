@@ -5,7 +5,7 @@ const FarmerLogin = ({ onLogin }: any) => {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
 
-  // 🔹 Fake Send OTP
+  //  Fake Send OTP
   const sendOtp = () => {
     if (phone.length !== 10) {
       alert("Enter valid 10 digit number");
@@ -18,7 +18,7 @@ const FarmerLogin = ({ onLogin }: any) => {
     setOtpSent(true);
   };
 
-  // 🔹 Fake Verify OTP
+  // Fake Verify OTP
   const verifyOtp = () => {
     if (otp === "123456") {
       const user = {
