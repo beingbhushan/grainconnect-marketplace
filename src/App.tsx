@@ -11,7 +11,7 @@ function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
 
 
-  // 🔹 Add product
+  //  Add product
   const handleAddProduct = (product: Omit<Product, "id">) => {
     const newProduct = {
       ...product,
@@ -20,12 +20,12 @@ function App() {
     setProducts((prev) => [...prev, newProduct]);
   };
 
-  // 🔹 Login
+  //  Login
   const handleLogin = (user: any) => {
     setFarmer(user);
   };
 
-  // 🔹 Logout
+  //  Logout
   const handleLogout = () => {
     setFarmer(null);
   };

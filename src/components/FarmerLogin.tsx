@@ -1,102 +1,85 @@
 import React, { useState } from "react";
-import { auth } from "../firebase";
-import {
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from "firebase/auth";
 
 const FarmerLogin = ({ onLogin }: any) => {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
-  const [confirmResult, setConfirmResult] = useState<any>(null);
+  const [otpSent, setOtpSent] = useState(false);
 
-  // 🔹 Send OTP
-  const sendOtp = async () => {
-  try {
-    if (!(window as any).recaptchaVerifier) {
-      (window as any).recaptchaVerifier = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        { size: "invisible" }
-      );
-
-      await (window as any).recaptchaVerifier.render(); // 🔥 IMPORTANT
+  // 🔹 Fake Send OTP
+  const sendOtp = () => {
+    if (phone.length !== 10) {
+      alert("Enter valid 10 digit number");
+      return;
     }
 
-    const appVerifier = (window as any).recaptchaVerifier;
+    console.log("OTP is 123456"); // dev ke liye
+    alert("OTP sent successfully");
 
-    const result = await signInWithPhoneNumber(
-      auth,
-      `+91${phone}`,
-      appVerifier
-    );
+    setOtpSent(true);
+  };
 
-    setConfirmResult(result);
-    alert("OTP sent");
-  } catch (error: any) {
-    console.error(error);
-    alert(error.message);
-  }
-};
-
-
-  // 🔹 Verify OTP
-  const verifyOtp = async () => {
-    try {
-      const res = await confirmResult.confirm(otp);
-
+  // 🔹 Fake Verify OTP
+  const verifyOtp = () => {
+    if (otp === "123456") {
       const user = {
-        id: res.user.uid,
-        phone: res.user.phoneNumber,
+        id: Date.now().toString(),
+        phone: phone,
+        name: "Farmer " + phone.slice(-4),
       };
 
       onLogin(user);
-    } catch (error) {
+    } else {
       alert("Invalid OTP");
     }
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold text-center">Farmer Login</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-xl shadow-lg w-80">
+        {!otpSent ? (
+          <>
+            <h2 className="text-xl font-bold text-center mb-4">
+              Farmer Login
+            </h2>
 
-      {!confirmResult ? (
-        <>
-          <input
-            type="text"
-            placeholder="Enter mobile number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full border p-2 rounded"
-          />
+            <input
+              type="text"
+              placeholder="Enter mobile number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full border p-2 rounded mb-4"
+            />
 
-          <button
-            onClick={sendOtp}
-            className="w-full bg-green-600 text-white py-2 rounded"
-          >
-            Send OTP
-          </button>
-        </>
-      ) : (
-        <>
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            className="w-full border p-2 rounded"
-          />
+            <button
+              onClick={sendOtp}
+              className="w-full bg-green-600 text-white py-2 rounded"
+            >
+              Send OTP
+            </button>
+          </>
+        ) : (
+          <>
+            <h2 className="text-xl font-bold text-center mb-4">
+              Enter OTP
+            </h2>
 
-          <button
-            onClick={verifyOtp}
-            className="w-full bg-blue-600 text-white py-2 rounded"
-          >
-            Verify OTP
-          </button>
-        </>
-      )}
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              className="w-full border p-2 rounded mb-4"
+            />
 
-      <div id="recaptcha-container"></div>
+            <button
+              onClick={verifyOtp}
+              className="w-full bg-green-600 text-white py-2 rounded"
+            >
+              Verify OTP
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 };
