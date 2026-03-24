@@ -1,6 +1,5 @@
 import React from 'react';
 import { Wheat, Users, MapPin, ShoppingCart, Star, Truck, Leaf, TrendingUp } from 'lucide-react';
-import GoogleTranslate from './GoogleTranslate';
 
 interface HomePageProps {
   onNavigate: (view: 'home' | 'farmer' | 'customer') => void;
